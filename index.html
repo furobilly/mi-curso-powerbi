@@ -1,548 +1,1625 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mi Curso SQL - De Cero a Héroe</title>
-  <style>
-    :root {
-      --clr-bg: #0a0e27;
-      --clr-primary-1: #667eea;
-      --clr-primary-2: #764ba2;
-      --clr-success: #4CAF50;
-      --clr-success-light: #8BC34A;
-      --clr-accent: #FFC107;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family:-apple-system, BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
-      background: var(--clr-bg);
-      color: #fff;
-      line-height: 1.6;
-    }
-    header {
-      background: linear-gradient(135deg, var(--clr-primary-1), var(--clr-primary-2));
-      padding: 3rem 2rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    header::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-      background-size: 50px 50px;
-      animation: move 20s linear infinite;
-    }
-    @keyframes move {
-      0% { transform: translate(0,0); }
-      100% { transform: translate(50px,50px); }
-    }
-    header h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      position: relative;
-      z-index: 1;
-    }
-    header .subtitle {
-      font-size: 1.2rem;
-      position: relative;
-      z-index: 1;
-    }
-    .start-button {
-      background: var(--clr-success);
-      color: #fff;
-      border: none;
-      padding: 1rem 3rem;
-      font-size: 1.2rem;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all .3s;
-      position: relative;
-      z-index: 1;
-      box-shadow: 0 4px 15px rgba(76,175,80,.4);
-    }
-    .start-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(76,175,80,.6);
-    }
-    .start-button:disabled {
-      background: #666;
-      cursor: not-allowed;
-    }
-    .course-dates {
-      margin-top: 1rem;
-      font-size: 1.1rem;
-      position: relative;
-      z-index: 1;
-    }
-    .progress-container {
-      background: rgba(255,255,255,.2);
-      border-radius: 15px;
-      margin: 1.5rem auto;
-      max-width: 600px;
-      padding: 3px;
-      position: relative;
-      z-index: 1;
-    }
-    .progress-bar {
-      background: linear-gradient(90deg, var(--clr-success), var(--clr-success-light));
-      height: 30px;
-      border-radius: 12px;
-      width: 0%;
-      transition: width .5s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: bold;
-      position: relative;
-      overflow: hidden;
-    }
-    .progress-bar::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
-      animation: shimmer 2s infinite;
-    }
-    @keyframes shimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-    nav {
-      background: #1a1f3a;
-      padding: 1rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 10px rgba(0,0,0,.3);
-    }
-    nav ul {
-      list-style: none;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 2rem;
-    }
-    nav a {
-      text-decoration: none;
-      color: #fff;
-      font-weight: 500;
-      transition: all .3s;
-      padding: .5rem 1rem;
-      border-radius: 20px;
-    }
-    nav a:hover {
-      background: rgba(255,255,255,.1);
-      transform: translateY(-2px);
-    }
-    .container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-    .motivation {
-      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-      color: #fff;
-      padding: 1rem;
-      border-radius: 10px;
-      margin: 1rem 0;
-      text-align: center;
-      font-weight: bold;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    .module {
-      background: #1a1f3a;
-      border-radius: 15px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 5px 20px rgba(0,0,0,.3);
-      border: 1px solid rgba(255,255,255,.1);
-      position: relative;
-      overflow: hidden;
-    }
-    .module::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 4px;
-      background: linear-gradient(90deg, var(--clr-primary-1), var(--clr-primary-2));
-    }
-    .module-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-    .module h2 {
-      font-size: 1.8rem; color: #fff;
-    }
-    .status-current {
-      background: linear-gradient(135deg, var(--clr-accent), #FFD54F);
-      color: #333;
-      padding: .5rem 1rem;
-      border-radius: 20px;
-      font-size: .9rem;
-      font-weight: bold;
-    }
-    .status-locked {
-      background: rgba(255,255,255,.2);
-      color: #999;
-      padding: .5rem 1rem;
-      border-radius: 20px;
-      font-size: .9rem;
-      font-weight: bold;
-    }
-    .module-objectives {
-      background: rgba(255,255,255,.05);
-      padding: 1rem;
-      border-radius: 10px;
-      margin-bottom: 1.5rem;
-    }
-    .module-objectives h3 {
-      color: var(--clr-success-light);
-      margin-bottom: .5rem;
-    }
-    .module-objectives ul {
-      list-style: none;
-      padding-left: 1rem;
-    }
-    .module-objectives li::before {
-      content: '✓ '; color: var(--clr-success); font-weight: bold;
-    }
-    .lesson {
-      background: rgba(255,255,255,.05);
-      border-radius: 10px;
-      padding: 1.5rem;
-      margin: 1rem 0;
-      cursor: pointer;
-      transition: all .3s;
-      border: 2px solid transparent;
-    }
-    .lesson:hover {
-      background: rgba(255,255,255,.08);
-      border-color: var(--clr-primary-1);
-      transform: translateX(5px);
-    }
-    .lesson.completed {
-      border-color: var(--clr-success);
-    }
-    .lesson-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .lesson h3 {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    .lesson-content {
-      display: none;
-      margin-top: 1.5rem;
-    }
-    .lesson.active .lesson-content {
-      display: block;
-    }
-    .resources-section {
-      background: rgba(76,175,80,.1);
-      padding: 1.5rem;
-      border-radius: 10px;
-      margin: 1rem 0;
-    }
-    .resource-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
-      gap: 1rem;
-    }
-    .resource-card {
-      background: rgba(255,255,255,.05);
-      padding: 1rem;
-      border-radius: 8px;
-      text-align: center;
-      transition: all .3s;
-    }
-    .resource-card:hover {
-      background: rgba(255,255,255,.1);
-      transform: translateY(-3px);
-    }
-    .btn {
-      display: inline-block;
-      padding: .75rem 1.5rem;
-      border-radius: 25px;
-      text-decoration: none;
-      font-weight: 500;
-      transition: all .3s;
-      margin: .5rem;
-      border: none;
-      cursor: pointer;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--clr-primary-1), var(--clr-primary-2));
-      color: #fff;
-    }
-    .btn-success {
-      background: linear-gradient(135deg, var(--clr-success), var(--clr-success-light));
-      color: #fff;
-    }
-    .btn-download {
-      background: linear-gradient(135deg, #FF5722, #FF7043);
-      color: #fff;
-    }
-    .final-project {
-      background: linear-gradient(135deg, var(--clr-primary-1), var(--clr-primary-2));
-      padding: 2rem;
-      border-radius: 15px;
-      margin: 2rem 0;
-      text-align: center;
-    }
-    .final-project h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }
-    .fade-in {
-      animation: fadeIn .5s ease-in;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power BI: De 0 a Experto | Tu Transformación Profesional</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #f2c811;
+            --secondary: #1e1e1e;
+            --success: #4CAF50;
+            --danger: #f44336;
+            --info: #2196F3;
+            --dark: #0a0e27;
+            --light: #f5f5f5;
+            --gradient: linear-gradient(135deg, #f2c811 0%, #ffb400 100%);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--dark);
+            color: #fff;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        body.light-mode {
+            background: var(--light);
+            color: #333;
+        }
+        
+        /* Header Power BI Style */
+        header {
+            background: linear-gradient(135deg, #f2c811 0%, #ffb400 50%, #ff6b00 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="0" y="0" width="100" height="100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/><line x1="0" y1="0" x2="100" y2="100" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></svg>');
+            background-size: 20px 20px;
+            animation: grid-move 20s linear infinite;
+        }
+        
+        @keyframes grid-move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(20px, 20px); }
+        }
+        
+        header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #f2c811; }
+            to { text-shadow: 0 0 20px #fff, 0 0 30px #ff6b00, 0 0 40px #ff6b00; }
+        }
+        
+        /* Gamification Bar */
+        .gamification-bar {
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            flex-wrap: wrap;
+        }
+        
+        .game-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .game-stat:hover {
+            transform: scale(1.05);
+        }
+        
+        .game-stat i {
+            font-size: 1.5rem;
+        }
+        
+        /* Progress System */
+        .progress-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            margin: 1.5rem auto;
+            max-width: 800px;
+            padding: 3px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 50%, #CDDC39 100%);
+            height: 40px;
+            border-radius: 12px;
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-weight: bold;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            animation: shimmer 2s infinite;
+        }
+        
+        /* Study Timer */
+        .study-timer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary);
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .timer-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        /* Navigation */
+        nav {
+            background: rgba(30,30,30,0.95);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.05);
+        }
+        
+        nav a:hover {
+            background: var(--gradient);
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* Module Cards */
+        .module {
+            background: rgba(30,30,30,0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(242,200,17,0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .module:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(242,200,17,0.3);
+        }
+        
+        .module::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient);
+        }
+        
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .module h2 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .module-icon {
+            font-size: 2.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Lesson Cards */
+        .lesson {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .lesson:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--primary);
+            transform: translateX(10px);
+        }
+        
+        .lesson.completed {
+            border-color: var(--success);
+            background: rgba(76,175,80,0.1);
+        }
+        
+        .lesson.completed::after {
+            content: '✓';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: var(--success);
+        }
+        
+        .lesson-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .lesson-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .lesson-content {
+            display: none;
+            margin-top: 1.5rem;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .lesson.active .lesson-content {
+            display: block;
+        }
+        
+        /* Resources Grid */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .resource-card {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .resource-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+        
+        .resource-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        /* Quiz System */
+        .quiz-container {
+            background: rgba(33,150,243,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+            border: 2px solid rgba(33,150,243,0.3);
+        }
+        
+        .quiz-question {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .quiz-options {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .quiz-option {
+            background: rgba(255,255,255,0.05);
+            padding: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .quiz-option:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--info);
+            transform: translateX(5px);
+        }
+        
+        .quiz-option.correct {
+            background: rgba(76,175,80,0.2);
+            border-color: var(--success);
+        }
+        
+        .quiz-option.incorrect {
+            background: rgba(244,67,54,0.2);
+            border-color: var(--danger);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 0.5rem;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: var(--secondary);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #2196F3 0%, #03A9F4 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        
+        /* Code Blocks */
+        pre {
+            background: #1e1e1e;
+            border: 1px solid rgba(242,200,17,0.3);
+            padding: 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            position: relative;
+        }
+        
+        code {
+            color: #f2c811;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.95rem;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Badges System */
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 0.2rem;
+        }
+        
+        .badge-new {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .badge-points {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+        
+        .badge-time {
+            background: var(--info);
+            color: white;
+        }
+        
+        /* Certificate */
+        .certificate {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            color: var(--secondary);
+        }
+        
+        .certificate::before {
+            content: '🏆';
+            position: absolute;
+            font-size: 10rem;
+            opacity: 0.1;
+            right: -2rem;
+            top: -2rem;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 30px;
+            padding: 0.5rem;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        
+        /* Notes System */
+        .notes-container {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        .notes-textarea {
+            width: 100%;
+            min-height: 100px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(242,200,17,0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            color: white;
+            resize: vertical;
+        }
+        
+        /* Exercise Cards */
+        .exercise-card {
+            background: linear-gradient(135deg, rgba(242,200,17,0.1) 0%, rgba(255,107,0,0.1) 100%);
+            border: 2px solid rgba(242,200,17,0.5);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+        }
+        
+        .exercise-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .exercise-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .gamification-bar {
+                gap: 0.5rem;
+            }
+            
+            .game-stat {
+                font-size: 0.9rem;
+                padding: 0.3rem 0.8rem;
+            }
+            
+            .module {
+                padding: 1rem;
+            }
+            
+            .study-timer {
+                bottom: 10px;
+                right: 10px;
+                padding: 0.8rem;
+            }
+        }
+        
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Module Status */
+        .module-status {
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .status-current {
+            background: var(--gradient);
+            color: var(--secondary);
+        }
+        
+        .status-completed {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+        }
+        
+        .status-locked {
+            background: rgba(255,255,255,0.2);
+            color: #999;
+        }
+        
+        /* Video Container */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin: 1rem 0;
+            border-radius: 10px;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 10px;
+        }
+        
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        th {
+            background: rgba(242,200,17,0.2);
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>🚀 Mi Curso de SQL Server</h1>
-    <p class="subtitle">Analista Power BI - Curso Personalizado</p>
-    <button class="start-button" id="startButton">🎯 INICIAR MI AVENTURA SQL</button>
-    <div class="course-dates" id="courseDates">
-      <p id="startDate">Presiona el botón para comenzar tu viaje</p>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">
+        <span id="themeIcon">🌙</span>
     </div>
-    <div class="progress-container">
-      <div class="progress-bar" id="progressBar">0%</div>
+
+    <!-- Header -->
+    <header>
+        <h1>⚡ Power BI: De 0 a Experto</h1>
+        <p style="font-size: 1.3rem; margin-bottom: 1rem;">Tu Transformación Profesional en Business Intelligence</p>
+        
+        <!-- Gamification Stats -->
+        <div class="gamification-bar">
+            <div class="game-stat">
+                <span>🏆</span>
+                <span id="userLevel">Nivel 1: Principiante</span>
+            </div>
+            <div class="game-stat">
+                <span>⭐</span>
+                <span id="userPoints">0 XP</span>
+            </div>
+            <div class="game-stat">
+                <span>🔥</span>
+                <span id="userStreak">0 días seguidos</span>
+            </div>
+            <div class="game-stat">
+                <span>🎖️</span>
+                <span id="userBadges">0 insignias</span>
+            </div>
+        </div>
+        
+        <button class="btn btn-primary pulse" onclick="startCourse()" id="startButton">
+            🚀 COMENZAR MI TRANSFORMACIÓN
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar">0% Completado</div>
+        </div>
+        
+        <p style="position: relative; z-index: 1; margin-top: 1rem;">
+            <span id="courseStatus">📅 12 semanas | 💼 7 módulos | 🎯 1 proyecto final</span>
+        </p>
+    </header>
+
+    <!-- Study Timer -->
+    <div class="study-timer">
+        <div class="timer-display" id="studyTimer">00:00:00</div>
+        <button class="btn btn-success" onclick="toggleTimer()">▶️ Iniciar</button>
     </div>
-    <p style="position:relative; z-index:1;">🎯 Meta: De Principiante → Experto en SQL</p>
-  </header>
 
-  <nav>
-    <ul>
-      <li><a href="#modulo1">📚 Básico</a></li>
-      <li><a href="#modulo2">📊 Intermedio</a></li>
-      <li><a href="#modulo3">🚀 Avanzado</a></li>
-      <li><a href="#modulo4">💎 Experto</a></li>
-      <li><a href="#recursos">📁 Recursos</a></li>
-      <li><a href="#logros">🏆 Mis Logros</a></li>
-    </ul>
-  </nav>
-
-  <main class="container">
-    <div class="motivation fade-in">💪 "El experto en algo fue una vez un principiante que nunca se rindió"</div>
-
-    <section class="module fade-in" id="modulo1">
-      <div class="module-header">
-        <h2>📚 Módulo 1: Fundamentos SQL</h2>
-        <span class="status-current">EN PROGRESO</span>
-      </div>
-      <div class="module-objectives">
-        <h3>🎯 Objetivos del Módulo:</h3>
+    <!-- Navigation -->
+    <nav>
         <ul>
-          <li>Comprender qué es SQL y su sintaxis básica</li>
-          <li>Aprender a conectar con una base de datos</li>
-          <li>Dominar SELECT, FROM, WHERE paso a paso</li>
-          <li>Filtrar, ordenar y agrupar resultados</li>
-          <li>Crear tu primera tabla y poblarla</li>
+            <li><a href="#modulo1">📚 M1: Fundamentos</a></li>
+            <li><a href="#modulo2">🔄 M2: Transformación</a></li>
+            <li><a href="#modulo3">🔗 M3: Modelado</a></li>
+            <li><a href="#modulo4">🧮 M4: DAX Básico</a></li>
+            <li><a href="#modulo5">📊 M5: Visualizaciones</a></li>
+            <li><a href="#modulo6">🚀 M6: DAX Avanzado</a></li>
+            <li><a href="#modulo7">☁️ M7: Service</a></li>
+            <li><a href="#proyecto">🏆 Proyecto Final</a></li>
+            <li><a href="#recursos">📚 Recursos</a></li>
         </ul>
-      </div>
+    </nav>
 
-      <!-- Día 1 -->
-      <article class="lesson" onclick="toggleLesson(this)">
-        <div class="lesson-header">
-          <h3>
-            <input type="checkbox" id="lesson1" onchange="updateProgress()">
-            <span>Día 1: Tu Primera Conexión SQL</span>
-          </h3>
-          <span>⏱️ 60 min</span>
-        </div>
-        <p>En esta lección entenderás qué es SQL, cómo se estructura y darás tus primeros pasos conectándote a un servidor.</p>
-        <div class="lesson-content">
-          <h4>📝 Paso a paso:</h4>
-          <ol>
-            <li><strong>Interfaz:</strong> Abre MySQL Workbench y familiarízate con el panel de conexiones.</li>
-            <li><strong>Crear conexión:</strong> Configura Nombre, Hostname (localhost), Usuario (root) y prueba conexión.</li>
-            <li><strong>Explora:</strong> Navega el árbol de bases de datos y tablas.</li>
-            <li><strong>Tu primer query:</strong> <code>SELECT NOW()</code> para verificar la conexión.</li>
-          </ol>
-          <div class="resources-section">
-            <h4>📥 Recursos para descargar:</h4>
-            <div class="resource-grid">
-              <div class="resource-card">
-                <h5>🗄️ Base de Datos SQL</h5>
-                <a href="assets/base-datos.sql" download class="btn btn-download">Descargar SQL</a>
-              </div>
-              <div class="resource-card">
-                <h5>📄 Guía Día 1 PDF</h5>
-                <a href="assets/guia-dia1.pdf" download class="btn btn-download">Descargar PDF</a>
-              </div>
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="module fade-in">
+            <h2>🎯 Objetivos del Programa</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">
+                Al finalizar este programa intensivo de 12 semanas serás capaz de:
+            </p>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">📊</div>
+                    <h4>Dashboards Profesionales</h4>
+                    <p>Crear visualizaciones interactivas de alto impacto</p>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🔗</div>
+                    <h4>Modelado Complejo</h4>
+                    <p>Diseñar modelos de datos escalables y eficientes</p>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🧮</div>
+                    <h4>DAX Avanzado</h4>
+                    <p>Dominar las fórmulas y cálculos complejos</p>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🔄</div>
+                    <h4>Automatización</h4>
+                    <p>Implementar procesos automáticos de actualización</p>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">💡</div>
+                    <h4>Insights de Negocio</h4>
+                    <p>Presentar análisis que generen valor real</p>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🏆</div>
+                    <h4>Certificación</h4>
+                    <p>Prepararte para Microsoft PL-300</p>
+                </div>
             </div>
-          </div>
-          <pre><code>-- Conecta y valida:
-CREATE DATABASE IF NOT EXISTS Curso_SQL;
-USE Curso_SQL;
-SELECT NOW();</code></pre>
-          <div class="mini-quiz">
-            <h5>🧠 Mini-Test:</h5>
-            <p><strong>¿Qué comando muestra la fecha y hora actual?</strong></p>
-            <div class="quiz-options">
-              <div class="quiz-option" onclick="checkAnswer(this,false,'q1')">SHOW NOW();</div>
-              <div class="quiz-option" onclick="checkAnswer(this,true,'q1')">SELECT NOW();</div>
-              <div class="quiz-option" onclick="checkAnswer(this,false,'q1')">GET NOW();</div>
+        </div>
+
+        <!-- MÓDULO 1 -->
+        <div class="module fade-in" id="modulo1">
+            <div class="module-header">
+                <h2><span class="module-icon">📚</span> Módulo 1: Fundamentos y Configuración</h2>
+                <span class="module-status status-current">SEMANA 1</span>
             </div>
-            <div class="quiz-feedback" id="feedback-q1"></div>
-          </div>
-        </div>
-      </article>
-
-      <!-- Día 2 -->
-      <article class="lesson" onclick="toggleLesson(this)">
-        <div class="lesson-header">
-          <h3>
-            <input type="checkbox" id="lesson2" onchange="updateProgress()">
-            <span>Día 2: Contar y Sumar como un Pro</span>
-          </h3>
-          <span>⏱️ 45 min</span>
-        </div>
-        <p>Aquí practicarás funciones de agregación: COUNT, SUM, AVG, MIN, MAX para analizar datos.</p>
-        <div class="lesson-content">
-          <h4>📝 Paso a paso:</h4>
-          <ol>
-            <li><strong>Cuenta registros:</strong> <code>SELECT COUNT(*) FROM Ventas;</code></li>
-            <li><strong>Suma:</strong> <code>SELECT SUM(Precio) FROM Ventas;</code></li>
-            <li><strong>Promedio:</strong> <code>SELECT AVG(Precio) FROM Ventas;</code></li>
-            <li><strong>Rangos:</strong> MIN, MAX para límites.</li>
-          </ol>
-          <div class="resources-section">
-            <h4>📥 Ejercicios SQL</h4>
-            <div class="resource-grid">
-              <div class="resource-card">
-                <h5>📝 Ejercicios Día 2</h5>
-                <a href="assets/ejercicios-dia2.zip" download class="btn btn-download">Descargar Ejercicios</a>
-              </div>
+            
+            <div class="exercise-card">
+                <h3>🎯 Objetivos del Módulo</h3>
+                <ul>
+                    <li>Comprender el ecosistema completo de Power BI (Desktop, Service, Mobile)</li>
+                    <li>Dominar conceptos fundamentales de Business Intelligence</li>
+                    <li>Configurar el entorno de trabajo profesional</li>
+                    <li>Realizar tus primeras conexiones y visualizaciones</li>
+                </ul>
             </div>
-          </div>
-          <pre><code>-- Ejemplo:
-SELECT COUNT(*) AS TotalVentas FROM Ventas;
-SELECT SUM(Total) AS Ingreso FROM Ventas;</code></pre>
+
+            <!-- Lección 1.1 -->
+            <div class="lesson" onclick="toggleLesson(this)">
+                <div class="lesson-header">
+                    <h3>
+                        <input type="checkbox" id="lesson1-1" onchange="updateProgress()">
+                        <span>📖 Lección 1.1: ¿Qué es Power BI?</span>
+                    </h3>
+                    <div class="lesson-meta">
+                        <span class="badge badge-time">⏱️ 30 min</span>
+                        <span class="badge badge-points">+50 XP</span>
+                    </div>
+                </div>
+                <p>Comprende el ecosistema completo y por qué es líder en BI</p>
+                
+                <div class="lesson-content">
+                    <h4>🎓 Contenido Teórico</h4>
+                    <ul>
+                        <li><strong>Power BI Desktop:</strong> Herramienta de desarrollo local</li>
+                        <li><strong>Power BI Service:</strong> Plataforma en la nube para compartir</li>
+                        <li><strong>Power BI Mobile:</strong> Acceso desde cualquier dispositivo</li>
+                        <li><strong>Power BI Report Server:</strong> Solución on-premise</li>
+                    </ul>
+
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/yKTSLffVGbk" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="resources-grid">
+                        <div class="resource-card">
+                            <div class="resource-icon">📄</div>
+                            <h4>Guía Ecosistema Power BI</h4>
+                            <a href="#" class="btn btn-primary">Descargar PDF</a>
+                        </div>
+                        <div class="resource-card">
+                            <div class="resource-icon">🎥</div>
+                            <h4>Video: Intro a Power BI</h4>
+                            <a href="https://www.youtube.com/results?search_query=que+es+power+bi+español" target="_blank" class="btn btn-info">Ver en YouTube</a>
+                        </div>
+                        <div class="resource-card">
+                            <div class="resource-icon">📊</div>
+                            <h4>Casos de Éxito</h4>
+                            <a href="#" class="btn btn-success">Ver Ejemplos</a>
+                        </div>
+                    </div>
+
+                    <div class="quiz-container">
+                        <h4>🧠 Mini-Test: Ecosistema Power BI</h4>
+                        <div class="quiz-question">
+                            ¿Cuál es la herramienta principal para crear reportes en Power BI?
+                        </div>
+                        <div class="quiz-options">
+                            <div class="quiz-option" onclick="checkAnswer(this, true, 'q1-1')">
+                                <span>A)</span> Power BI Desktop
+                            </div>
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 'q1-1')">
+                                <span>B)</span> Power BI Service
+                            </div>
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 'q1-1')">
+                                <span>C)</span> Power BI Mobile
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notes-container">
+                        <h4>📝 Mis Notas</h4>
+                        <textarea class="notes-textarea" placeholder="Escribe aquí tus notas sobre esta lección..." onchange="saveNotes('lesson1-1', this.value)"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lección 1.2 -->
+            <div class="lesson" onclick="toggleLesson(this)">
+                <div class="lesson-header">
+                    <h3>
+                        <input type="checkbox" id="lesson1-2" onchange="updateProgress()">
+                        <span>🛠️ Lección 1.2: Instalación y Configuración</span>
+                    </h3>
+                    <div class="lesson-meta">
+                        <span class="badge badge-time">⏱️ 25 min</span>
+                        <span class="badge badge-points">+75 XP</span>
+                    </div>
+                </div>
+                <p>Configura tu entorno de trabajo como un profesional</p>
+                
+                <div class="lesson-content">
+                    <h4>📥 Proceso de Instalación</h4>
+                    
+                    <div class="code-header">
+                        <span>Requisitos del Sistema</span>
+                        <button class="btn btn-info" onclick="copyCode(this)">📋 Copiar</button>
+                    </div>
+                    <pre><code>💻 Hardware Mínimo:
+- Procesador: Intel i5 o AMD Ryzen 5
+- RAM: 8GB (recomendado 16GB)
+- Almacenamiento: 10GB disponibles
+- Sistema: Windows 10/11 64-bit
+
+🔗 Descarga oficial:
+https://powerbi.microsoft.com/desktop</code></pre>
+
+                    <div class="exercise-card">
+                        <div class="exercise-header">
+                            <span class="exercise-icon">💡</span>
+                            <h4>Ejercicio Práctico: Primera Instalación</h4>
+                        </div>
+                        <ol>
+                            <li>Descarga Power BI Desktop desde el sitio oficial</li>
+                            <li>Ejecuta el instalador con permisos de administrador</li>
+                            <li>Selecciona idioma español</li>
+                            <li>Completa la instalación (5-10 minutos)</li>
+                            <li>Abre Power BI y explora la interfaz</li>
+                        </ol>
+                    </div>
+
+                    <div class="resources-grid">
+                        <div class="resource-card">
+                            <div class="resource-icon">🔧</div>
+                            <h4>Guía de Instalación</h4>
+                            <a href="#" class="btn btn-primary">Descargar</a>
+                        </div>
+                        <div class="resource-card">
+                            <div class="resource-icon">❓</div>
+                            <h4>Troubleshooting</h4>
+                            <a href="#" class="btn btn-info">Ver Soluciones</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ejercicio 1 -->
+            <div class="lesson" onclick="toggleLesson(this)">
+                <div class="lesson-header">
+                    <h3>
+                        <input type="checkbox" id="exercise1-1" onchange="updateProgress()">
+                        <span>💼 Ejercicio 1: Mi Primera Conexión</span>
+                    </h3>
+                    <div class="lesson-meta">
+                        <span class="badge badge-time">⏱️ 45 min</span>
+                        <span class="badge badge-points">+100 XP</span>
+                        <span class="badge badge-new">NUEVO</span>
+                    </div>
+                </div>
+                <p>Conecta Excel a Power BI y crea tu primer reporte</p>
+                
+                <div class="lesson-content">
+                    <div class="exercise-card">
+                        <h4>📋 Escenario</h4>
+                        <p><strong>Rol:</strong> Analista de una tienda local de electrónicos</p>
+                        <p><strong>Objetivo:</strong> Crear un reporte básico de ventas mensuales</p>
+                        <p><strong>Datos:</strong> Archivo Excel con ventas 2023-2024</p>
+                    </div>
+
+                    <div class="resources-grid">
+                        <div class="resource-card">
+                            <div class="resource-icon">📊</div>
+                            <h4>Dataset: Ventas Tienda</h4>
+                            <a href="https://github.com/yourusername/powerbi-course/raw/main/datasets/ventas_tienda.xlsx" class="btn btn-primary">Descargar Excel</a>
+                        </div>
+                        <div class="resource-card">
+                            <div class="resource-icon">📹</div>
+                            <h4>Video Tutorial</h4>
+                            <a href="#" class="btn btn-info">Ver Solución</a>
+                        </div>
+                    </div>
+
+                    <h4>📝 Tareas a Completar</h4>
+                    <ol>
+                        <li>
+                            <strong>Conectar datos:</strong>
+                            <ul>
+                                <li>Abrir Power BI Desktop</li>
+                                <li>Obtener datos → Excel</li>
+                                <li>Seleccionar archivo ventas_tienda.xlsx</li>
+                                <li>Cargar tabla "Ventas2024"</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Explorar datos:</strong>
+                            <ul>
+                                <li>Vista de tabla → revisar columnas</li>
+                                <li>Identificar tipos de datos</li>
+                                <li>Verificar calidad (nulos, errores)</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Crear visualizaciones:</strong>
+                            <ul>
+                                <li>Gráfico de columnas: Ventas por mes</li>
+                                <li>Tarjeta: Total de ventas</li>
+                                <li>Gráfico circular: Ventas por categoría</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <pre><code>// Código DAX para tu primera medida
+Total Ventas = SUM(Ventas2024[Monto])
+
+// Promedio de ventas
+Promedio Ventas = AVERAGE(Ventas2024[Monto])
+
+// Conteo de transacciones
+Número Ventas = COUNT(Ventas2024[ID_Venta])</code></pre>
+
+                    <div class="quiz-container">
+                        <h4>✅ Checklist de Validación</h4>
+                        <div style="margin-left: 1rem;">
+                            <label><input type="checkbox"> Datos cargados correctamente</label><br>
+                            <label><input type="checkbox"> 3 visualizaciones creadas</label><br>
+                            <label><input type="checkbox"> Medidas DAX implementadas</label><br>
+                            <label><input type="checkbox"> Formato aplicado a gráficos</label><br>
+                            <label><input type="checkbox"> Título agregado al reporte</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evaluación Módulo 1 -->
+            <div class="lesson" onclick="toggleLesson(this)">
+                <div class="lesson-header">
+                    <h3>
+                        <span>🎯 Evaluación Módulo 1</span>
+                    </h3>
+                    <div class="lesson-meta">
+                        <span class="badge badge-time">⏱️ 60 min</span>
+                        <span class="badge badge-points">+200 XP</span>
+                    </div>
+                </div>
+                <p>Demuestra lo aprendido con un examen teórico y práctico</p>
+                
+                <div class="lesson-content">
+                    <div class="quiz-container">
+                        <h4>📝 Examen Teórico (20 preguntas)</h4>
+                        <p>Temas incluidos:</p>
+                        <ul>
+                            <li>Componentes del ecosistema Power BI</li>
+                            <li>Tipos de visualizaciones básicas</li>
+                            <li>Conceptos fundamentales de BI</li>
+                            <li>Proceso de conexión de datos</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="startExam('module1')">Comenzar Examen</button>
+                    </div>
+
+                    <div class="exercise-card">
+                        <h4>💻 Examen Práctico</h4>
+                        <p><strong>Tiempo límite:</strong> 45 minutos</p>
+                        <p><strong>Requisitos:</strong></p>
+                        <ol>
+                            <li>Conectar el dataset proporcionado</li>
+                            <li>Crear 3 visualizaciones diferentes</li>
+                            <li>Implementar 2 medidas DAX básicas</li>
+                            <li>Aplicar formato profesional</li>
+                            <li>Exportar como PDF</li>
+                        </ol>
+                        <p><strong>Criterio de aprobación:</strong> 70% en ambos exámenes</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </article>
 
-      <!-- Proyecto Final -->
-      <section class="final-project">
-        <h3>🏆 Proyecto Final Módulo 1</h3>
-        <p id="finalLockMsg">🔒 Primero completa los días 1 y 2 para desbloquear este proyecto.</p>
-        <ul style="list-style:none; text-align:left; max-width:600px; margin:0 auto;">
-          <li>✓ Total de ventas por vendedor</li>
-          <li>✓ Promedio de precio por marca</li>
-          <li>✓ Día con más ventas</li>
-          <li>✓ Top 3 vendedores del mes</li>
-        </ul>
-        <button id="finalBtn" class="btn btn-success" disabled>Comenzar Proyecto</button>
-      </section>
-    </section>
+        <!-- MÓDULO 2 -->
+        <div class="module fade-in" id="modulo2">
+            <div class="module-header">
+                <h2><span class="module-icon">🔄</span> Módulo 2: Transformación de Datos con Power Query</h2>
+                <span class="module-status status-locked">SEMANAS 2-3</span>
+            </div>
+            
+            <div class="exercise-card">
+                <h3>🎯 Objetivos del Módulo</h3>
+                <ul>
+                    <li>Dominar Power Query Editor para limpieza de datos</li>
+                    <li>Aplicar transformaciones avanzadas</li>
+                    <li>Combinar múltiples fuentes de datos</li>
+                    <li>Automatizar procesos de ETL</li>
+                </ul>
+                <p style="text-align: center; margin-top: 2rem; font-size: 1.2rem;">
+                    🔒 Completa el 80% del Módulo 1 para desbloquear
+                </p>
+            </div>
+        </div>
 
-    <!-- Módulo 2 Bloqueado -->
-    <section class="module" id="modulo2">
-      <div class="module-header">
-        <h2>📊 Módulo 2: SQL Intermedio</h2>
-        <span class="status-locked">🔒 Completa el 80% del Módulo 1 para desbloquear</span>
-      </div>
-      <div class="module-objectives">
-        <h3>🎯 Objetivos del Módulo:</h3>
-        <ul>
-          <li>Dominar todos los tipos de JOIN</li>
-          <li>Crear subconsultas complejas</li>
-          <li>Trabajar con fechas y tiempos</li>
-          <li>Usar CASE WHEN para lógica condicional</li>
-          <li>Optimizar consultas para rendimiento</li>
-        </ul>
-      </div>
-    </section>
+        <!-- MÓDULO 3 -->
+        <div class="module fade-in" id="modulo3">
+            <div class="module-header">
+                <h2><span class="module-icon">🔗</span> Módulo 3: Modelado de Datos</h2>
+                <span class="module-status status-locked">SEMANAS 4-5</span>
+            </div>
+            
+            <div class="exercise-card">
+                <h3>🎯 Objetivos del Módulo</h3>
+                <ul>
+                    <li>Diseñar modelos dimensionales (esquema estrella)</li>
+                    <li>Crear relaciones complejas entre tablas</li>
+                    <li>Implementar jerarquías y roles</li>
+                    <li>Optimizar rendimiento del modelo</li>
+                </ul>
+                <p style="text-align: center; margin-top: 2rem; font-size: 1.2rem;">
+                    🔒 Completa el Módulo 2 para desbloquear
+                </p>
+            </div>
+        </div>
 
-    <!-- Recursos y Logros (puedes completar igual que antes) -->
-    <section class="module" id="recursos"></section>
-    <section class="module" id="logros"></section>
-  </main>
+        <!-- Recursos Globales -->
+        <div class="module fade-in" id="recursos">
+            <h2>📚 Centro de Recursos</h2>
+            
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">📊</div>
+                    <h4>Datasets del Curso</h4>
+                    <p>Todos los archivos de práctica</p>
+                    <a href="https://github.com/yourusername/powerbi-course/datasets" class="btn btn-primary">Ir a GitHub</a>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-icon">📖</div>
+                    <h4>Documentación Microsoft</h4>
+                    <p>Referencia oficial Power BI</p>
+                    <a href="https://docs.microsoft.com/power-bi" target="_blank" class="btn btn-info">Visitar</a>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-icon">🎥</div>
+                    <h4>Playlist YouTube</h4>
+                    <p>Videos en español del curso</p>
+                    <a href="https://youtube.com/playlist?list=YOUR_PLAYLIST" target="_blank" class="btn btn-success">Ver Videos</a>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-icon">💡</div>
+                    <h4>DAX Guide</h4>
+                    <p>Referencia completa DAX</p>
+                    <a href="https://dax.guide" target="_blank" class="btn btn-primary">Explorar</a>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-icon">👥</div>
+                    <h4>Comunidad</h4>
+                    <p>Grupo de estudio</p>
+                    <a href="#" class="btn btn-info">Unirse</a>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-icon">🏆</div>
+                    <h4>Certificación PL-300</h4>
+                    <p>Guía de preparación</p>
+                    <a href="#" class="btn btn-success">Descargar</a>
+                </div>
+            </div>
+        </div>
 
-  <script>
-    function startCourse() {
-      const startDate = new Date().toLocaleDateString('es-ES', {
-        year:'numeric', month:'long', day:'numeric'
-      });
-      document.getElementById('startDate').innerHTML =
-        `<strong>🎉 Iniciado:</strong> ${startDate} | <strong>🎯 Nivel:</strong> Principiante → Experto`;
-      const btn = document.getElementById('startButton');
-      btn.textContent = '✅ Curso Iniciado';
-      btn.disabled = true;
-      localStorage.setItem('courseStartDate', startDate);
-      alert('¡Bienvenido a tu aventura SQL! 🚀\n\nRecuerda practicar cada día 💪');
-    }
+        <!-- Sistema de Logros -->
+        <div class="module fade-in">
+            <h2>🏆 Mis Logros y Certificaciones</h2>
+            
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">🥇</div>
+                    <h4>Primera Conexión</h4>
+                    <p>Conectaste tu primer dataset</p>
+                    <span class="badge badge-points">+50 XP</span>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-icon">📊</div>
+                    <h4>Visualizador</h4>
+                    <p>Creaste 10 gráficos diferentes</p>
+                    <span class="badge badge-points">+100 XP</span>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-icon">🧮</div>
+                    <h4>Maestro DAX</h4>
+                    <p>Dominas 20+ funciones DAX</p>
+                    <span class="badge badge-points">+200 XP</span>
+                </div>
+            </div>
 
-    function toggleLesson(el) {
-      el.classList.toggle('active');
-    }
+            <div class="certificate" id="certificate" style="display: none;">
+                <h2>🎓 Certificado de Finalización</h2>
+                <h3>Power BI: De 0 a Experto</h3>
+                <p>Este certifica que</p>
+                <h2 id="userName">[Tu Nombre]</h2>
+                <p>Ha completado exitosamente el programa completo de Power BI</p>
+                <p><strong>Fecha:</strong> <span id="certDate"></span></p>
+                <button class="btn btn-primary" onclick="downloadCertificate()">📥 Descargar PDF</button>
+            </div>
+        </div>
+    </div>
 
-    function checkAnswer(el, isCorrect, qId) {
-      const opts = el.parentElement.querySelectorAll('.quiz-option');
-      const fb = document.getElementById(`feedback-${qId}`);
-      opts.forEach(o=>o.onclick=null);
-      if (isCorrect) {
-        el.classList.add('correct');
-        fb.classList.add('success');
-        fb.textContent = '✅ ¡Correcto! Sigue así 🎉';
-        fb.style.display = 'block';
-        const cb = el.closest('.lesson').querySelector('input[type="checkbox"]');
-        if (cb && !cb.checked) { cb.checked = true; updateProgress(); }
-      } else {
-        el.classList.add('incorrect');
-        fb.classList.add('error');
-        fb.textContent = '❌ No es correcto, vuelve a intentarlo 💪';
-        fb.style.display = 'block';
-      }
-    }
+    <script>
+        // Variables globales
+        let studyTime = 0;
+        let timerInterval = null;
+        let isTimerRunning = false;
+        let userXP = 0;
+        let userLevel = 1;
+        let userStreak = 0;
+        let userBadges = 0;
+        let completedLessons = new Set();
 
-    function updateProgress() {
-      const totalEls = document.querySelectorAll('input[type="checkbox"]').length;
-      const doneEls  = document.querySelectorAll('input[type="checkbox"]:checked').length;
-      const percent = Math.round((doneEls/totalEls)*100);
-      const bar = document.getElementById('progressBar');
-      bar.style.width = percent + '%';
-      bar.textContent = percent + '%';
+        // Función para iniciar el curso
+        function startCourse() {
+            const userName = prompt('¡Bienvenido! ¿Cuál es tu nombre?');
+            if (userName) {
+                localStorage.setItem('powerbi_userName', userName);
+                localStorage.setItem('powerbi_startDate', new Date().toISOString());
+                
+                document.getElementById('startButton').innerHTML = '✅ Curso Iniciado - ¡Vamos allá!';
+                document.getElementById('startButton').disabled = true;
+                
+                // Mensaje motivacional
+                showNotification(`¡Bienvenido ${userName}! 🎉`, 
+                    'Tu transformación en Power BI comienza ahora. Recuerda: cada experto fue alguna vez un principiante.', 
+                    'success');
+                
+                // Iniciar gamificación
+                addXP(10);
+                updateStreak();
+            }
+        }
 
-      // Proyecto final desbloqueo
-      const l1 = document.getElementById('lesson1').checked;
-      const l2 = document.getElementById('lesson2').checked;
-      const btn = document.getElementById('finalBtn');
-      const msg = document.getElementById('finalLockMsg');
-      if (l1 && l2) {
-        btn.disabled = false;
-        msg.style.display = 'none';
-      } else {
-        btn.disabled = true;
-        msg.style.display = 'block';
-      }
-    }
+        // Sistema de XP y Niveles
+        function addXP(points) {
+            userXP += points;
+            
+            // Calcular nivel (cada 500 XP = 1 nivel)
+            const newLevel = Math.floor(userXP / 500) + 1;
+            
+            if (newLevel > userLevel) {
+                userLevel = newLevel;
+                showNotification('¡Subiste de nivel! 🎉', 
+                    `Ahora eres nivel ${userLevel}. ¡Sigue así!`, 'success');
+            }
+            
+            updateGameStats();
+            
+            // Guardar progreso
+            localStorage.setItem('powerbi_xp', userXP);
+            localStorage.setItem('powerbi_level', userLevel);
+        }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('startButton').addEventListener('click', startCourse);
-      // Restaura fecha y progreso si gustas...
-    });
-  </script>
+        // Actualizar estadísticas de gamificación
+        function updateGameStats() {
+            document.getElementById('userLevel').textContent = `Nivel ${userLevel}: ${getLevelTitle(userLevel)}`;
+            document.getElementById('userPoints').textContent = `${userXP} XP`;
+            document.getElementById('userStreak').textContent = `${userStreak} días seguidos`;
+            document.getElementById('userBadges').textContent = `${userBadges} insignias`;
+        }
+
+        // Obtener título según nivel
+        function getLevelTitle(level) {
+            const titles = {
+                1: 'Principiante',
+                2: 'Aprendiz',
+                3: 'Analista Junior',
+                4: 'Analista',
+                5: 'Analista Senior',
+                6: 'Especialista BI',
+                7: 'Experto BI',
+                8: 'Maestro BI',
+                9: 'Gurú BI',
+                10: 'Leyenda BI'
+            };
+            return titles[level] || 'Leyenda BI';
+        }
+
+        // Toggle lesson content
+        function toggleLesson(element) {
+            element.classList.toggle('active');
+            
+            // Si es la primera vez que abre la lección, dar XP
+            const lessonId = element.querySelector('input[type="checkbox"]')?.id;
+            if (lessonId && !completedLessons.has(lessonId)) {
+                addXP(10); // XP por abrir lección nueva
+            }
+        }
+
+        // Check quiz answer
+        function checkAnswer(element, isCorrect, questionId) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            
+            // Deshabilitar todas las opciones
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            if (isCorrect) {
+                element.classList.add('correct');
+                showNotification('¡Correcto! 🎉', 'Excelente trabajo. Sigue así.', 'success');
+                addXP(25); // XP por respuesta correcta
+                
+                // Marcar lección como completada
+                const lesson = element.closest('.lesson');
+                const checkbox = lesson?.querySelector('input[type="checkbox"]');
+                if (checkbox && !checkbox.checked) {
+                    checkbox.checked = true;
+                    updateProgress();
+                }
+            } else {
+                element.classList.add('incorrect');
+                showNotification('No es correcto 🤔', 
+                    'No te preocupes, revisa el contenido y vuelve a intentarlo. ¡Cada error es una oportunidad de aprender!', 
+                    'error');
+            }
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+            const percentage = Math.round((checked.length / checkboxes.length) * 100);
+            
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '% Completado';
+            
+            // Guardar progreso
+            localStorage.setItem('powerbi_progress', percentage);
+            
+            // Guardar estado de cada lección
+            checkboxes.forEach((cb) => {
+                if (cb.checked && !completedLessons.has(cb.id)) {
+                    completedLessons.add(cb.id);
+                    addXP(50); // XP por completar lección
+                }
+                localStorage.setItem(`powerbi_${cb.id}`, cb.checked);
+            });
+            
+            // Logros por hitos
+            if (percentage === 25 && !localStorage.getItem('powerbi_25_achieved')) {
+                showNotification('¡25% Completado! 🎯', 
+                    'Un cuarto del camino recorrido. ¡Vas excelente!', 'success');
+                addXP(100);
+                userBadges++;
+                localStorage.setItem('powerbi_25_achieved', true);
+            } else if (percentage === 50 && !localStorage.getItem('powerbi_50_achieved')) {
+                showNotification('¡50% Completado! 🌟', 
+                    '¡Llegaste a la mitad! Tu dedicación es admirable.', 'success');
+                addXP(200);
+                userBadges++;
+                localStorage.setItem('powerbi_50_achieved', true);
+            } else if (percentage === 100 && !localStorage.getItem('powerbi_100_achieved')) {
+                showNotification('¡100% Completado! 🏆', 
+                    '¡FELICITACIONES! Has completado todo el curso. Eres oficialmente un experto en Power BI.', 'success');
+                addXP(500);
+                userBadges++;
+                localStorage.setItem('powerbi_100_achieved', true);
+                showCertificate();
+            }
+            
+            updateGameStats();
+        }
+
+        // Study Timer
+        function toggleTimer() {
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                document.querySelector('.study-timer button').textContent = '▶️ Iniciar';
+            } else {
+                timerInterval = setInterval(updateTimer, 1000);
+                isTimerRunning = true;
+                document.querySelector('.study-timer button').textContent = '⏸️ Pausar';
+            }
+        }
+
+        function updateTimer() {
+            studyTime++;
+            const hours = Math.floor(studyTime / 3600);
+            const minutes = Math.floor((studyTime % 3600) / 60);
+            const seconds = studyTime % 60;
+            
+            document.getElementById('studyTimer').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Guardar tiempo de estudio
+            localStorage.setItem('powerbi_studyTime', studyTime);
+            
+            // XP por tiempo de estudio (cada 5 minutos)
+            if (studyTime % 300 === 0) {
+                addXP(15);
+                showNotification('¡5 minutos más! ⏰', 
+                    'Tu constancia está dando frutos. +15 XP', 'info');
+            }
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const icon = document.getElementById('themeIcon');
+            icon.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+            localStorage.setItem('powerbi_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        }
+
+        // Save notes
+        function saveNotes(lessonId, content) {
+            localStorage.setItem(`powerbi_notes_${lessonId}`, content);
+            showNotification('Notas guardadas 📝', 'Tus notas se han guardado correctamente', 'info');
+        }
+
+        // Show notification
+        function showNotification(title, message, type) {
+            // Crear elemento de notificación
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+                color: white;
+                padding: 1.5rem 2rem;
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+                z-index: 10000;
+                max-width: 400px;
+                text-align: center;
+                animation: slideDown 0.3s ease-out;
+            `;
+            
+            notification.innerHTML = `
+                <h4 style="margin: 0 0 0.5rem 0; font-size: 1.2rem;">${title}</h4>
+                <p style="margin: 0;">${message}</p>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remover después de 5 segundos
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        // Update streak
+        function updateStreak() {
+            const lastVisit = localStorage.getItem('powerbi_lastVisit');
+            const today = new Date().toDateString();
+            
+            if (lastVisit !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (lastVisit === yesterday.toDateString()) {
+                    userStreak++;
+                } else {
+                    userStreak = 1;
+                }
+                
+                localStorage.setItem('powerbi_streak', userStreak);
+                localStorage.setItem('powerbi_lastVisit', today);
+                
+                if (userStreak > 1) {
+                    showNotification(`¡${userStreak} días seguidos! 🔥`, 
+                        'Tu constancia es admirable. ¡Sigue así!', 'success');
+                    addXP(userStreak * 10);
+                }
+            }
+            
+            updateGameStats();
+        }
+
+        // Show certificate
+        function showCertificate() {
+            const userName = localStorage.getItem('powerbi_userName') || 'Estudiante';
+            const date = new Date().toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('certDate').textContent = date;
+            document.getElementById('certificate').style.display = 'block';
+            document.getElementById('certificate').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Copy code
+        function copyCode(button) {
+            const code = button.parentElement.nextElementSibling.textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✅ Copiado';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Start exam
+        function startExam(moduleId) {
+            alert(`Examen del ${moduleId} iniciando...\n\nEsta función estará disponible pronto. Por ahora, practica con los mini-tests de cada lección.`);
+        }
+
+        // Download certificate
+        function downloadCertificate() {
+            alert('La función de descarga de certificado estará disponible pronto. Por ahora, puedes tomar una captura de pantalla.');
+        }
+
+        // Load saved progress on page load
+        window.onload = function() {
+            // Cargar tema
+            const savedTheme = localStorage.getItem('powerbi_theme');
+            if (savedTheme === 'light') {
+                toggleTheme();
+            }
+            
+            // Cargar progreso
+            const savedProgress = localStorage.getItem('powerbi_progress');
+            if (savedProgress) {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.style.width = savedProgress + '%';
+                progressBar.textContent = savedProgress + '% Completado';
+            }
+            
+            // Cargar estado de lecciones
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach((cb) => {
+                const savedState = localStorage.getItem(`powerbi_${cb.id}`);
+                if (savedState === 'true') {
+                    cb.checked = true;
+                    completedLessons.add(cb.id);
+                }
+            });
+            
+            // Cargar notas
+            document.querySelectorAll('.notes-textarea').forEach(textarea => {
+                const lessonId = textarea.closest('.lesson').querySelector('input[type="checkbox"]')?.id;
+                if (lessonId) {
+                    const savedNotes = localStorage.getItem(`powerbi_notes_${lessonId}`);
+                    if (savedNotes) {
+                        textarea.value = savedNotes;
+                    }
+                }
+            });
+            
+            // Cargar gamificación
+            userXP = parseInt(localStorage.getItem('powerbi_xp')) || 0;
+            userLevel = parseInt(localStorage.getItem('powerbi_level')) || 1;
+            userStreak = parseInt(localStorage.getItem('powerbi_streak')) || 0;
+            studyTime = parseInt(localStorage.getItem('powerbi_studyTime')) || 0;
+            
+            // Cargar badges
+            if (localStorage.getItem('powerbi_25_achieved')) userBadges++;
+            if (localStorage.getItem('powerbi_50_achieved')) userBadges++;
+            if (localStorage.getItem('powerbi_100_achieved')) userBadges++;
+            
+            updateGameStats();
+            updateStreak();
+            
+            // Verificar si ya inició el curso
+            const userName = localStorage.getItem('powerbi_userName');
+            if (userName) {
+                document.getElementById('startButton').innerHTML = '✅ Curso Iniciado - ¡Continúa tu progreso!';
+                document.getElementById('startButton').disabled = true;
+            }
+            
+            // Actualizar timer display
+            const hours = Math.floor(studyTime / 3600);
+            const minutes = Math.floor((studyTime % 3600) / 60);
+            const seconds = studyTime % 60;
+            document.getElementById('studyTimer').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        };
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+            
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Auto-save progress every minute
+        setInterval(() => {
+            if (isTimerRunning) {
+                localStorage.setItem('powerbi_lastSave', new Date().toISOString());
+            }
+        }, 60000);
+    </script>
 </body>
 </html>
