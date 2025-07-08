@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Curso SQL - Dalton</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-container {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            margin: 1rem auto;
+            max-width: 600px;
+            padding: 3px;
+        }
+        
+        .progress-bar {
+            background: #4CAF50;
+            height: 30px;
+            border-radius: 7px;
+            width: 5%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        /* Navigation */
+        nav {
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #2a5298;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #1e3c72;
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* Modules */
+        .module {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .module h2 {
+            color: #1e3c72;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .module-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: auto;
+        }
+        
+        .status-current {
+            background: #FFC107;
+            color: #333;
+        }
+        
+        .status-completed {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .status-locked {
+            background: #ddd;
+            color: #666;
+        }
+        
+        /* Lessons */
+        .lesson {
+            border-left: 3px solid #e0e0e0;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .lesson:hover {
+            border-color: #2a5298;
+            background: #f8f9fa;
+            margin-left: 0.5rem;
+        }
+        
+        .lesson.completed {
+            border-color: #4CAF50;
+        }
+        
+        .lesson h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .lesson-content {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .lesson.active .lesson-content {
+            display: block;
+        }
+        
+        /* Code blocks */
+        pre {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #2a5298;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1e3c72;
+        }
+        
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-download {
+            background: #FF5722;
+            color: white;
+        }
+        
+        /* Resources */
+        .resources {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .resource-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Quiz */
+        .quiz {
+            background: #e3f2fd;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        .quiz-question {
+            margin-bottom: 1rem;
+        }
+        
+        .quiz-options label {
+            display: block;
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .quiz-options label:hover {
+            background: #bbdefb;
+        }
+        
+        /* Checkbox styling */
+        input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+        
+        input[type="checkbox"]:checked + span {
+            text-decoration: line-through;
+            color: #666;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.75rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .module {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>🚀 Mi Curso de SQL Server</h1>
+        <p>Analista Power BI - Grupo Dalton</p>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar">5%</div>
+        </div>
+        <p>Iniciado: 07/07/2025 | Nivel: Principiante → Experto</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#modulo1">Módulo 1: Básico</a></li>
+            <li><a href="#modulo2">Módulo 2: Intermedio</a></li>
+            <li><a href="#modulo3">Módulo 3: Avanzado</a></li>
+            <li><a href="#modulo4">Módulo 4: Experto</a></li>
+            <li><a href="#recursos">Recursos</a></li>
+            <li><a href="#examenes">Exámenes</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Módulo 1 -->
+        <div class="module" id="modulo1">
+            <h2>
+                📚 Módulo 1: Fundamentos SQL
+                <span class="module-status status-current">EN PROGRESO</span>
+            </h2>
+            
+            <!-- Lección 1 -->
+            <div class="lesson" onclick="toggleLesson(this)">
+                <h3>
+                    <input type="checkbox" id="lesson1" onchange="updateProgress()">
+                    <span>Día 1: Mi Primera Conexión y Consultas Básicas</span>
+                </h3>
+                <p>SELECT, FROM, WHERE - Los comandos esenciales</p>
+                
+                <div class="lesson-content">
+                    <h4>📝 Contenido de la lección:</h4>
+                    
+                    <h5>1. Conectar a MySQL Workbench</h5>
+                    <pre><code>-- Servidor: localhost
+-- Usuario: root
+-- Base de datos: ventasautos</code></pre>
+                    
+                    <h5>2. Tu primera consulta</h5>
+                    <pre><code>-- Ver todos los datos
+SELECT * FROM ventasautos.ventasautos;
+
+-- Contar registros
+SELECT COUNT(*) AS TotalVentas 
+FROM ventasautos.ventasautos;</code></pre>
+                    
+                    <h5>3. Filtrar datos</h5>
+                    <pre><code>-- Solo ventas de Polanco
+SELECT * FROM ventasautos.ventasautos
+WHERE Sucursal = 'Polanco';</code></pre>
+                    
+                    <div class="resources">
+                        <div class="resource-card">
+                            <h5>📄 Archivo SQL</h5>
+                            <a href="#" class="btn btn-download">Descargar día1.sql</a>
+                        </div>
+                        <div class="resource-card">
+                            <h5>🎥 Video de apoyo</h5>
+                            <a href="https://www.youtube.com/results?search_query=sql+basics+mysql+workbench" target="_blank" class="btn btn-primary">Ver en YouTube</a>
+                        </div>
+                    </div>
+                    
+                    <div class="quiz">
+                        <h5>✅ Autoevaluación</h5>
+                        <div class="quiz-question">
+                            <p>¿Qué hace SELECT * FROM tabla?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1"> Borra todos los datos</label>
+                                <label><input type="radio" name="q1"> Muestra todos los datos ✓</label>
+                                <label><input type="radio" name="q1"> Cuenta los datos</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lección 2 -->
+            <div class="lesson" onclick="toggleLesson(this)">
+                <h3>
+                    <input type="checkbox" id="lesson2" onchange="updateProgress()">
+                    <span>Día 2: COUNT, SUM y Agregaciones</span>
+                </h3>
+                <p>Aprende a contar y sumar datos</p>
+                
+                <div class="lesson-content">
+                    <h4>📝 Próximamente...</h4>
+                    <p>Esta lección se desbloqueará cuando completes el Día 1</p>
+                </div>
+            </div>
+            
+            <!-- Más lecciones... -->
+            <div class="lesson" onclick="toggleLesson(this)">
+                <h3>
+                    <input type="checkbox" id="lesson3" onchange="updateProgress()">
+                    <span>Día 3: GROUP BY y HAVING</span>
+                </h3>
+                <p>Agrupa y filtra datos agrupados</p>
+            </div>
+            
+            <div class="lesson" onclick="toggleLesson(this)">
+                <h3>
+                    <input type="checkbox" id="lesson4" onchange="updateProgress()">
+                    <span>Día 4: Tu primer JOIN</span>
+                </h3>
+                <p>Une tablas para análisis complejos</p>
+            </div>
+        </div>
+
+        <!-- Módulo 2 -->
+        <div class="module" id="modulo2">
+            <h2>
+                📊 Módulo 2: SQL Intermedio
+                <span class="module-status status-locked">BLOQUEADO</span>
+            </h2>
+            <p>Completa el Módulo 1 para desbloquear</p>
+            <ul>
+                <li>JOINs avanzados (LEFT, RIGHT, FULL)</li>
+                <li>Subconsultas</li>
+                <li>Funciones de fecha</li>
+                <li>CASE WHEN</li>
+            </ul>
+        </div>
+
+        <!-- Recursos -->
+        <div class="module" id="recursos">
+            <h2>📚 Centro de Recursos</h2>
+            
+            <div class="resources">
+                <div class="resource-card">
+                    <h3>🗄️ Base de Datos</h3>
+                    <p>Script completo de Dalton</p>
+                    <a href="#" class="btn btn-download">Descargar SQL</a>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>📝 Cheat Sheet</h3>
+                    <p>Comandos SQL rápidos</p>
+                    <a href="#" class="btn btn-download">Descargar PDF</a>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>🎥 Videos</h3>
+                    <p>Playlist de YouTube</p>
+                    <a href="https://www.youtube.com/results?search_query=sql+course+spanish" target="_blank" class="btn btn-primary">Ver Videos</a>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>💡 Ejercicios</h3>
+                    <p>100 ejercicios prácticos</p>
+                    <a href="#" class="btn btn-success">Practicar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exámenes -->
+        <div class="module" id="examenes">
+            <h2>📝 Exámenes</h2>
+            
+            <div class="quiz">
+                <h3>Examen Módulo 1</h3>
+                <p>20 preguntas - 30 minutos</p>
+                <p>Debes completar todas las lecciones del Módulo 1 primero</p>
+                <button class="btn btn-primary" disabled>Comenzar Examen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle lesson content
+        function toggleLesson(element) {
+            element.classList.toggle('active');
+        }
+        
+        // Update progress bar
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+            const percentage = Math.round((checked.length / checkboxes.length) * 100);
+            
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+            
+            // Save progress to localStorage
+            localStorage.setItem('sqlCourseProgress', percentage);
+            
+            // Save individual lesson states
+            checkboxes.forEach((cb, index) => {
+                localStorage.setItem('lesson' + index, cb.checked);
+            });
+        }
+        
+        // Load saved progress
+        window.onload = function() {
+            const savedProgress = localStorage.getItem('sqlCourseProgress');
+            if (savedProgress) {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.style.width = savedProgress + '%';
+                progressBar.textContent = savedProgress + '%';
+            }
+            
+            // Load individual lesson states
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach((cb, index) => {
+                const savedState = localStorage.getItem('lesson' + index);
+                if (savedState === 'true') {
+                    cb.checked = true;
+                }
+            });
+        }
+        
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
